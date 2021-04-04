@@ -1,0 +1,47 @@
+Change LED color with temperature when toggle switch is ON.
+
+#include <Adafruit_NeoPixel.h>
+#define LED 11
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, LED, NEO_RGB + NEO_KHZ800);
+
+const int SW = 12;
+int analogPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(SW, INPUT);
+  pinMode(11, OUTPUT);
+  pixels.begin();
+  pixels.show();
+}
+
+void loop() {
+  int val = analogRead(analogPin);
+  float temp = (val / 1023.0)*500;
+  if(digitalRead(SW) == LOW)
+  {
+    if(27 <= temp){
+      pixels.setPixelColor(0, 50, 50, 50);
+      pixels.show();
+    } else if(23 <= temp && temp < 25) {
+      pixels.setPixelColor(0, 0, 50, 0);
+      pixels.show();
+     
+    } else if(25 <= temp && temp < 27) {
+      pixels.setPixelColor(0, 0, 0, 50);
+      pixels.show();
+      
+    } else{
+      pixels.setPixelColor(0, 50, 0, 0);
+      pixels.show();
+    }
+  }
+  else {
+    pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+  }
+  Serial.print(temp, 1);
+  Serial.println(" ℃");
+  delay(500);
+}
