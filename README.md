@@ -1,3 +1,0 @@
-# smartsystem
-arduino
-ddd
