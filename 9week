@@ -12,10 +12,12 @@ decode_results results;
 int r = 50;
 int g = 50;
 int b = 50;
-int a = 0;
+int a = 3;
 int k = 0;
 boolean state = false;
-
+const int SW = 2;
+boolean previousSW = HIGH;
+boolean currentSW = HIGH;
 const int interruptPin1 = 2;
 const int pot_pin = A5;
 int pot_output;
@@ -24,6 +26,7 @@ int latchPin = 8;
 int clockPin = 7;
 char led;
 byte letters[][6] = { 
+ 
   {0x7F, 0x88, 0x88, 0x88, 0x7F, 0x00}, //  A 
   {0xFF, 0x91, 0x91, 0x91, 0x6E, 0x00}, //  B 
   {0x7E, 0x81, 0x81, 0x81, 0x42, 0x00}, //  C 
@@ -90,16 +93,12 @@ byte letters[][6] = {
   {0x00, 0x00, 0xFD, 0x00, 0x00, 0x00}, //  ! 
   {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}  // SPACE 
 }; 
-
-// character to letter mapping 
+ 
 String letterPositions = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890?! "; 
 
-// The database for the text to scroll 
 byte *textBytes; 
 int Length_Letters = 0; 
-int colVal[8] = {1, 2, 4, 8, 16, 32, 64, 128}; /* same to {B00000001, B00000010,
-B00000100, B00001000, B00010000, B00100000, B01000000, B10000000}; */
-
+int colVal[8] = {1, 2, 4, 8, 16, 32, 64, 128};
 
 void setup() {
   irrecv.enableIRIn();
@@ -114,33 +113,51 @@ void setup() {
   pinMode(clockPin, OUTPUT);
   pinMode(11, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(interruptPin1), exchange1, FALLING);
+  loadString(String(" "));
 }
 
 void loop() {
+  int p = -1; 
+    int rowVal = 0; 
+      for (int col = 0; col < 8; ++col){ 
+        rowVal = textBytes[p + col]; 
+        DotMatrixWrite(~rowVal, colVal[col]); 
+       }
   pot_output = analogRead(pot_pin);
   int mapped_pot_output = map(pot_output, 0, 1023, 0, 255);
   Serial.println(mapped_pot_output);
-  
+  currentSW = debounce(previousSW);
+
+  if(previousSW == HIGH && currentSW == LOW){
+     
+      previousSW = currentSW;
+  }
   if (Serial.available()) {
+   
     in = Serial.read();
     Serial.println(in);
-
+delay(100);
     if (in == 48) {
+       loadString(String("X"));
       pixels.setPixelColor(0, 0, 0, 0);
       pixels.show();
       k = 0;
+      a = 3;
     }
     else if (in == 49) {
+       loadString(String("R"));
       pixels.setPixelColor(0, 50, 0, 0);
       pixels.show();
       a = 0;
     }
     else if (in == 50) {
+       loadString(String("G"));
       pixels.setPixelColor(0, 0, 50, 0);
       pixels.show();
       a = 1;
     }
     else if (in == 51) {
+       loadString(String("B"));
       pixels.setPixelColor(0, 0, 0, 50);
       pixels.show();
       a = 2;
@@ -183,6 +200,8 @@ void loop() {
     }
   }
     
+  
+    
   if (irrecv.decode(&results)) {
     if (results.decode_type == NEC) {
  
@@ -193,21 +212,26 @@ void loop() {
           case 0 :
             pixels.setPixelColor(0, r, 0, 0);
             pixels.show();
+	loadString(String("R"));
             k = 1;
             break;
           case 1 :
             pixels.setPixelColor(0, 0,g, 0);
             pixels.show();
+	loadString(String("G"));
             k = 1;
             break;
           case 2 :
             pixels.setPixelColor(0, 0, 0,b);
             pixels.show();
+	loadString(String("B"));
             k = 1;
             break;
           }
         }
        else if(k == 1){
+        loadString(String("X"));
+        
         pixels.setPixelColor(0, 0, 0, 0);
         pixels.show();
         k = 0;
@@ -216,23 +240,27 @@ void loop() {
       
     
       else if (results.value == 0x00FF6897 ) {
+         loadString(String("X"));
         pixels.setPixelColor(0, 0, 0, 0);
         pixels.show();
         k = 0;
-     
+        a = 3;
       }
       else if (results.value == 0x00FF30CF) {
+         loadString(String("R"));
         a = 0;
         pixels.setPixelColor(0,r, 0, 0);
         pixels.show();
         
       }
       else if (results.value == 0x00FF18E7 ) {
+         loadString(String("G"));
         a = 1;
         pixels.setPixelColor(0, 0, g, 0);
         pixels.show();
       }
       else if (results.value == 0x00FF7A85) {
+         loadString(String("B"));
         a = 2;
         pixels.setPixelColor(0, 0, 0, b);
         pixels.show();
@@ -273,30 +301,18 @@ void loop() {
           pixels.show();
         }
       }
-       
   }
     irrecv.resume();
-  
-  
     }
-  int p = -1; 
-    int rowVal = 0; 
-    
-    // 반복을 변경하여 스크롤 텍스트의 속도 변경
-     
-      for (int col = 0; col < 8; ++col){ 
-        rowVal = textBytes[p + col]; 
-        DotMatrixWrite(~rowVal, colVal[col]); 
-       }
+
+  
 }
 void loadString(String text){ 
-  // Build up byte array
-  Length_Letters = text.length(); // length() 문자열의 길이를 반환합니다. 
-  // Allocate memory for byte array 
-  textBytes = (byte *)malloc(Length_Letters * 6 * sizeof(byte)); /* sizeof() 총 바이트 수를 반환합니다. So sizeof(byte) is equal to 1. */
-  int pos = 0; // position. chPos:문자 위치.
+  Length_Letters = text.length();
+  textBytes = (byte *)malloc(Length_Letters * 6 * sizeof(byte));
+  int pos = 0; 
   for (int i = 0; i < Length_Letters; ++i){ 
-    int chPos = letterPositions.indexOf(text[i]); /* indexOf(val) 문자열 내의 val 인덱스를 반환합니다., or -1 if not found. */
+    int chPos = letterPositions.indexOf(text[i]);
     if (chPos == -1) 
       continue;     
     
@@ -310,48 +326,38 @@ void loadString(String text){
 }
  
 void DotMatrixWrite(int rowVal, int colVal){ 
-  digitalWrite(latchPin, LOW); // Pull latch LOW to send data 
-  shiftOut(dataPin, clockPin, MSBFIRST, rowVal); // Send the row data byte. Row data should be sent first.
-  /* shiftOut(): Shifts out a byte of data one bit at a time. 
-  Syntax of shiftOut(): shiftOut(dataPin, clockPin, bitOrder, value)
-  clockPin: the pin to toggle once the dataPin has been set to the correct value(int).
-  */
-  shiftOut(dataPin, clockPin, MSBFIRST, colVal); // Send the column data byte 
-  digitalWrite(latchPin, HIGH); // Pull latch HIGH to finish sending data   
+  digitalWrite(latchPin, LOW);
+  shiftOut(dataPin, clockPin, MSBFIRST, rowVal); 
+  shiftOut(dataPin, clockPin, MSBFIRST, colVal); 
+  digitalWrite(latchPin, HIGH);
 }
+
+boolean debounce(boolean previous) {
+  boolean current = digitalRead(SW);
+  if (previous != current) {
+    current = digitalRead(SW);
+  }
+  return current;
+}
+
 void exchange1() {
   if(state == false){
-    
-    
-  
     if(a == 0){
          loadString(String("R"));
-        
-      
       } 
       else if(a == 1) {
         loadString(String("G"));
-      
       }
       else if(a == 2) {
        loadString(String("B"));
-
-        
       } 
      else if(a == 3) {
        loadString(String("X"));
-
-        
       } 
- 
-   
     state = true;
   }
-  
   else {
-        
         loadString(String(" "));
-        
-    state == false;
+    state = false;
   }
 }
