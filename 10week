@@ -187,6 +187,7 @@ case 1 :
   }
   
   switch(k) {
+    case 1 :
   if (LED_COLOR % 4 == 1) { 
     pixels.setPixelColor(0, brightness, 0, 0);
     pixels.show();
@@ -196,6 +197,7 @@ case 1 :
       }  
       }
   }
+  break;
   case 2 :
       pixels.setPixelColor(0, 0, 0, 0);
     pixels.show();
@@ -278,10 +280,10 @@ case 1 :
       delay(50);
     }
   }
-
-  if (analogRead(SOUND) > 1000) {
+  int m = analogRead(SOUND);
+  /*if (m > 1000) {
     for (int i = 0; i <= 2000; i += 100) {
-      Serial.println(SOUND);
+      Serial.println(m);
       pixels.setPixelColor(0, 255, 0, 0);
       pixels.show();
       delay(50);
@@ -289,7 +291,7 @@ case 1 :
       pixels.show();
       delay(50);
     }
-  }
+  }*/
   /*if(LED_COLOR % 4 == 3 && a % 2 == 0) {
     pixels.setPixelColor(0, 0, 0, 0);
     pixels.show();
