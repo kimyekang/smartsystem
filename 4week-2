@@ -1,0 +1,165 @@
+#include <Adafruit_NeoPixel.h>
+#define LED 11
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, LED, NEO_GRB + NEO_KHZ800);
+
+unsigned long previousMillis = 0;
+const int SW = 12;
+int a=0;
+int fadeAmount = 5;
+
+
+boolean previousSW = HIGH;
+boolean currentSW = HIGH;
+int brightness = 0;
+
+void setup() 
+{
+ 
+  pixels.begin();
+  pixels.show();
+  pinMode(SW, INPUT);
+
+}
+void loop() 
+{
+  unsigned long currentMillis = millis(); 
+  currentSW = debounce(previousSW);
+  
+  if(previousSW ==HIGH && currentSW == LOW) {               
+   a++;
+  }
+  previousSW = currentSW;
+  
+  if(a==1)  {
+    if(currentMillis - previousMillis >= 10)
+    {
+      pixels.setPixelColor(0, brightness, 0, 0);
+      pixels.show();
+      brightness = brightness + fadeAmount;
+       previousMillis = currentMillis;    
+     if (brightness <= 0 ){ 
+    brightness = 0;  
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    } 
+    }
+  }
+    
+   else if(a==2) {
+     if(currentMillis - previousMillis >= 10)
+    {  
+      pixels.setPixelColor(0, 0, brightness, 0);
+      pixels.show();
+      brightness = brightness +fadeAmount;
+      previousMillis = currentMillis;
+     if (brightness <= 0 ){ 
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    } 
+    }
+   }
+     
+   else if(a==3){
+      if(currentMillis - previousMillis >= 10){
+      pixels.setPixelColor(0, 0, 0, brightness);
+      pixels.show();
+      brightness = brightness +fadeAmount;
+       previousMillis = currentMillis;    
+     if (brightness <= 0 ){ 
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    }   
+    }
+   } 
+
+   else if(a==4){
+     if(currentMillis - previousMillis >= 10)
+    {  
+      pixels.setPixelColor(0, brightness, brightness, 0);
+      pixels.show();
+      brightness = brightness +fadeAmount;
+        previousMillis = currentMillis;   
+     if (brightness <= 0 ){ 
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    }   
+    }
+   } 
+  else if(a==5) {
+     if(currentMillis - previousMillis >= 10){
+      pixels.setPixelColor(0, brightness, 0, brightness);
+      pixels.show();
+      brightness = brightness +fadeAmount;
+       previousMillis = currentMillis;    
+     if (brightness <= 0 ){ 
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    }   
+    }
+   } 
+
+   else if(a==6){
+     if(currentMillis - previousMillis >= 10)
+    {
+      pixels.setPixelColor(0, 0, brightness, brightness);
+      pixels.show();
+      brightness = brightness +fadeAmount;
+      previousMillis = currentMillis;     
+     if (brightness <= 0 ){ 
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    }  
+    }
+   } 
+
+   else if(a==7){
+     if(currentMillis - previousMillis >= 10)
+    {
+      pixels.setPixelColor(0, brightness, brightness, brightness);
+      pixels.show();
+      brightness = brightness +fadeAmount;
+      previousMillis = currentMillis; 
+     if (brightness <= 0 ){ 
+    fadeAmount = -fadeAmount;
+    }
+    if (brightness >=245 ){ 
+    brightness = 245;
+    fadeAmount = -fadeAmount;
+    }   
+    }
+   } 
+    else if(a==8) {
+    pixels.setPixelColor(0,0,0,0);
+    pixels.show();
+    a=0;
+    }
+}
+
+boolean debounce (boolean previous)
+{
+  boolean current = digitalRead(SW);
+  if(previous != current)
+  {
+    delay(5);
+    current = digitalRead(SW);
+  }
+  return current;
+}
