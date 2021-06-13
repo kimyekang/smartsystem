@@ -1,0 +1,107 @@
+#include <Adafruit_NeoPixel.h>
+
+#define LED 11
+int a = 1;
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, LED, NEO_GRB + NEO_KHZ800);
+
+const int SW = 12;
+
+void setup() {
+  
+  pixels.begin();
+  pixels.show();
+  pinMode(SW, INPUT);
+
+}
+
+void loop() {
+ 
+
+ 
+  if(digitalRead(SW) == LOW && a == 1){
+    pixels.setPixelColor(0, 255, 0, 0);
+    pixels.show();
+    delay(1000);
+    a = 2;
+  }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();  
+  }
+
+  
+    if(digitalRead(SW) == LOW && a == 2){
+    pixels.setPixelColor(0, 0, 255, 0);
+    pixels.show();
+    delay(1000);
+    a = 3;
+    }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      
+  }
+
+  
+    if(digitalRead(SW) == LOW && a == 3){
+    pixels.setPixelColor(0, 0, 0, 255);
+    pixels.show();
+    delay(1000);
+    a = 4;
+    }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+  }
+
+  
+  if(digitalRead(SW) == LOW && a == 4){
+    pixels.setPixelColor(0, 255, 255, 0);
+    pixels.show();
+    delay(1000);
+    a = 5;
+  }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      
+  }
+
+  
+  if(digitalRead(SW) == LOW && a == 5){
+    pixels.setPixelColor(0, 255, 0, 255);
+    pixels.show();
+    delay(1000);
+    a = 6;
+    }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      
+  }
+  
+   
+  if(digitalRead(SW) == LOW && a == 6){
+    pixels.setPixelColor(0, 0, 225, 255);
+    pixels.show();
+    delay(1000);
+    a = 7;
+  }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      
+  }
+
+  if(digitalRead(SW) == LOW && a == 7){
+    pixels.setPixelColor(0, 225, 225, 225);
+    pixels.show();
+    delay(1000);
+    a = 1;
+  }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      
+  }
+}
