@@ -1,0 +1,372 @@
+#include <Adafruit_NeoPixel.h>
+
+#define Red Color(brightness, 0, 0)
+#define Off Color(0, 0, 0)
+#define Buzzer 6
+#define LED 11
+#define POWER 12
+#define SOUND A2
+#define IR A3
+#define TOUCH A4
+#define POT A5
+int dataPin = 10;
+int latchPin = 8;
+int clockPin = 7;
+int note[] = {2637, 2093, 2637, 2093, 2637, 2093};
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, LED, NEO_GRB + NEO_KHZ800);
+int X = A0;
+int Y = A1;
+int Z = 3;
+byte R[8] = {0x3F, 0x66, 0x66, 0x3E, 0x36, 0x66, 0x67, 0x00};
+byte G[8] = {0x3C, 0x66, 0x03, 0x03, 0x73, 0x66, 0x7C, 0x00};
+byte B[8] = { 0x3F, 0x66, 0x66, 0x3E, 0x66, 0x66, 0x3F, 0x00};
+byte pink[8] = { 0x3F, 0x66, 0x66, 0x3E, 0x06, 0x06, 0x0F, 0x00};
+byte smile[8] = {0x3C, 0x42, 0xA9, 0x85, 0x85, 0xA9, 0x42, 0x3C};
+byte sad[8] = {0x3C, 0x42, 0xA5, 0x89, 0x89, 0xA5, 0x42, 0x3C};
+byte one[8] = {0x00, 0x00, 0x10, 0x20, 0x7E, 0x00, 0x00, 0x00};
+byte two[8] = {0x00, 0x00, 0x36, 0x4A, 0x52, 0x22, 0x00, 0x00};
+byte three[8] = {0x00, 0x00, 0x42, 0x52, 0x52, 0x7E, 0x00, 0x00};
+byte dot[8] = {0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00};
+byte space[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+int VibSensor = 9;
+int USensor = 2;
+int USensorValue = 0;
+int colVal[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+int rowVal = 0;
+int brightness = 100;
+boolean started = false;
+int posy = B00000001;
+int posx = B00010000;
+int dotY = 128;
+int dotX;
+int k;
+boolean state = LOW;
+int touchsensor = 1;
+int pot_output = 0;
+int LED_COLOR = 3;
+int J3 = 1;
+unsigned long previousMillis = 0;
+unsigned long currentMillis = 0;
+boolean newDot = false;
+int score = 0;
+int previousScore = 0;
+int speedUp = 200;
+int Vibrate;
+int count = 1;
+void setup(){
+  pinMode(USensor, INPUT);
+  pinMode(VibSensor, INPUT);
+  pinMode(Buzzer, OUTPUT);
+  pinMode(POWER, INPUT);
+  pinMode(LED, OUTPUT);
+  pinMode(TOUCH, INPUT);
+  pinMode(dataPin, OUTPUT);
+  pinMode(latchPin, OUTPUT);
+  pinMode(clockPin, OUTPUT);
+  DotMatrixWrite(~0, 0);
+  pinMode(Buzzer, OUTPUT);
+  pinMode(X, INPUT);
+  pinMode(Y, INPUT);
+  pinMode(Z, INPUT);
+  pixels.begin();
+  pixels.show();
+  Serial.begin(9600);
+  randomSeed(analogRead(2));
+  dotX = randomMapping(random(1, 9));
+  }
+
+void loop() {
+  if (digitalRead(IR) == 0) {
+    for (int i = 0; i <= 2000; i += 100) {
+      pixels.setPixelColor(0, 0, 0, 255);
+      pixels.show();
+      delay(50);
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      delay(50);
+    }
+  }
+  
+  Vibrate = digitalRead(VibSensor);
+ if(Vibrate == LOW){
+    
+    delay(1000);
+    int elementCount = sizeof(note)/ sizeof(int);
+
+    for(int i = 0; i < elementCount; i++)
+  {
+    tone(Buzzer, note[i], 100); 
+    delay(300);
+  }
+  }
+  else
+    
+    
+    USensorValue = digitalRead(USensor);
+  if(USensorValue == LOW){
+    
+    delay(1000);
+    int elementCount = sizeof(note)/ sizeof(int);
+
+    for(int i = 0; i < elementCount; i++) {
+    delay(200);
+    tone(Buzzer, note[i], 100); 
+    delay(300);
+    }
+  }
+  else
+      
+  if (analogRead(SOUND) > 1000) {
+    for (int i = 0; i <= 2000; i += 100) {
+      pixels.setPixelColor(0, 255, 0, 0);
+      pixels.show();
+      delay(50);
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      delay(50);
+    }
+  }
+  
+  if(digitalRead(POWER) == LOW || J3 == 0){
+    delay(200);
+    state = !state;
+  }
+  
+  if (touchsensor != digitalRead(TOUCH)) {
+    LED_COLOR++;
+    touchsensor = digitalRead(TOUCH);
+  }
+
+  pot_output = analogRead(POT);
+  brightness = map(pot_output, 0, 1023, 0, 255);
+  
+switch(k) {
+  
+case 1 :
+  if (LED_COLOR % 4 == 3) { 
+    pixels.setPixelColor(0, brightness, (brightness / 5) , (brightness / 5) * 3);
+    pixels.show();
+    Display2(pink);
+  }
+  break;
+  case 2 :
+      pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+   Display2(space);
+    break;
+  }
+  
+  switch(k) {
+    case 1 :
+  if (LED_COLOR % 4 == 0) { 
+    pixels.setPixelColor(0, brightness, 0, 0);
+    pixels.show();
+  Display2(R);
+  }
+  break;
+  case 2 :
+      pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+    Display2(space); 
+    break;
+  }
+  
+  switch(k){
+    
+  case 1 :
+  if (LED_COLOR % 4 == 1) { 
+    pixels.setPixelColor(0, 0, brightness, 0);
+    pixels.show();
+   Display2(G);
+  }
+  break;
+   case 2 :
+      pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+   Display2(space);
+    break;
+  }
+  
+  switch(k){
+    
+  case 1 :
+  if (LED_COLOR % 4 == 2) { 
+    pixels.setPixelColor(0, 0, 0, brightness);
+    pixels.show();
+  Display2(B);
+  
+      break;
+  }
+   case 2 :
+      pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+    Display2(space);
+    break;
+  }
+  if(state == 0) {
+     k = 1;
+  }
+
+  if(state == 1 || count == 0) {
+    
+     k = 2;
+  }
+  
+  
+ int J3 = digitalRead(Z);
+ 
+ 
+ if (J3 == 0 && started == false){
+    count = 0;
+    
+    startGame();
+    //Serial.print("1");
+    blinkCharacter();
+    started = true;
+    }
+  if (started) {
+    
+    
+    int x = map(analogRead(X), 0, 1023, -10, 10);
+    int y = map(analogRead(Y), 0, 1023, -10, 10);
+
+    if(x > 0 && posx != 128) posx = posx*2;
+    if(x < 0 && posx != 1) posx = posx/2;
+    if(y > 0 && posy != 128) posy = posy*2;
+    if(y < 0 && posy != 1) posy = posy/2;
+    
+    currentMillis = millis();
+    if((currentMillis - previousMillis) >= speedUp) {
+      dotY = dotY/2;
+      previousMillis = currentMillis;
+      }
+     if(dotY >= 1) newDot = false;
+     else newDot = true;
+
+     if (newDot) {
+        dotX = randomMapping(random(1, 9));
+        dotY = 128;
+        score++;
+        Serial.println(score);
+      }
+      if((score - previousScore) == 5) {
+        previousScore = score;
+
+        if(speedUp > 50) speedUp = speedUp - 25;
+        }
+
+        Draw(posx, posy, dotX, dotY);
+        
+       if (posx == dotX && posy == dotY) {
+        tone(Buzzer, 2349, 250);
+        delay(200);
+        tone(Buzzer, 2349, 250);
+        delay(200);
+        tone(Buzzer, 2093, 250);
+        delay(50);
+        Display(sad, 1000);
+        DotMatrixWrite(~0, 0);
+        posx = B00010000;
+        posy = B00000001;
+        dotY = 128;
+        started = false;
+        score = 0;
+        count = 1;
+        } 
+    }  
+  }
+
+  void DotMatrixWrite(int rowVal, int colVal) {
+    
+    digitalWrite(latchPin,LOW);
+    shiftOut(dataPin, clockPin, MSBFIRST, rowVal);
+    shiftOut(dataPin, clockPin, MSBFIRST, colVal);
+    digitalWrite(latchPin, HIGH);
+    }
+    void Display2(byte data[]) {
+       if(count == 1) {
+       for (int i = 0; i < 8; i++) {
+          rowVal = data[i];
+          DotMatrixWrite(~rowVal, colVal[i]);
+        
+        }
+       }
+    }
+    void Display(byte data[], int millisec) {
+   
+      
+      
+      long startTime = millis();
+      long endTime = 0;
+      while ((endTime - startTime) <= millisec) {
+        for (int i = 0; i < 8; i++) {
+          rowVal = data[i];
+          DotMatrixWrite(~rowVal, colVal[i]);
+        
+        }
+        endTime = millis();
+        
+        }
+      
+        
+      
+    }
+      
+
+      void Draw (int posx, int posy, int dotX, int dotY) {
+        int xChar = onePos(posx);
+        int xDot = onePos(dotX);
+        byte screen[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+        if (xChar == xDot) screen[xChar] = posy + dotY;
+        else {
+          screen[xChar] = posy;
+          screen[xDot] = dotY;
+          }
+          Display(screen, 100);
+        }
+
+int onePos(int x) {
+   String a = String(x, BIN);
+   int c = a.length() - 1;
+   return c;
+  }
+void startGame() {
+  Serial.print("2");
+  Display(smile, 1000);
+  tone(Buzzer, 3136, 250);
+  Display(three, 1000);
+  tone(Buzzer, 3136, 250);
+  Display(two, 1000);
+  tone(Buzzer, 3136, 250);
+  Display(one, 1000);
+  
+  }
+
+void blinkCharacter() {
+  tone(Buzzer, 4186, 1200);
+  for (int i = 0; i < 3; i++) {
+    Display(dot, 200);
+    Display(space, 200);
+    }
+  }
+int randomMapping(int dotX) {
+   switch (dotX) {
+    case 1: dotX = 1; break;
+    case 2: dotX = 2; break;
+    case 3: dotX = 4; break;
+    case 4: dotX = 8; break;
+    case 5: dotX = 16; break;
+    case 6: dotX = 32; break;
+    case 7: dotX = 64; break;
+    case 8: dotX = 128; break;
+    }
+    return dotX;
+  }
+
+  void lightLED(uint32_t c) {
+    pixels.setPixelColor(0, c);
+    pixels.show();
+    }
