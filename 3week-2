@@ -1,0 +1,173 @@
+#include <Adafruit_NeoPixel.h>
+#define LED 11
+int a;
+int x;
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, LED, NEO_GRB + NEO_KHZ800);
+
+
+const int SW = 12;
+
+
+void setup() {
+  randomSeed(analogRead(0));
+  pixels.begin();
+  pixels.show();
+  pinMode(SW, INPUT);
+
+}
+
+ 
+
+void loop() {
+
+  int x = random(1,8) ; 
+  
+ a = x;
+ for(;;) {
+  if(digitalRead(SW) == LOW && a == 1){
+     for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, brightness, 0, 0);
+        pixels.show();
+        delay(10);
+      }
+        for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, brightness, 0, 0);
+        pixels.show();
+        delay(10);
+      }
+    a = 2;
+  }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+  break;
+    }
+
+    if(digitalRead(SW) == LOW && a == 2){
+      for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, 0, brightness, 0);
+        pixels.show();
+        delay(10);
+      }
+      for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, 0, brightness, 0);
+        pixels.show();
+        delay(10);
+
+      }
+    a = 3;
+    }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+      
+  break;
+  }
+
+    if(digitalRead(SW) == LOW && a == 3){
+    for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, 0, 0, brightness);
+        pixels.show();
+        delay(10);
+      }
+        for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, 0, 0, brightness);
+        pixels.show();
+        delay(10);
+      }
+    a = 4;
+    }
+
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+     
+  break;
+  }
+
+    if(digitalRead(SW) == LOW && a == 4){
+    for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, brightness, brightness, 0);
+        pixels.show();
+        delay(10);
+      }
+        for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, brightness, brightness, 0);
+        pixels.show();
+        delay(10);
+      }
+
+    a = 5;
+
+      }
+
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+
+  break;
+    }
+    if(digitalRead(SW) == LOW && a == 5){
+    for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, brightness, 0, brightness);
+        pixels.show();
+        delay(10);
+      }
+
+        for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, brightness, 0, brightness);
+        pixels.show();
+        delay(10);
+      }
+   a = 6;
+    }
+  if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+
+  break;
+    }
+
+    if(digitalRead(SW) == LOW && a == 6){
+    for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, 0, brightness, brightness);
+        pixels.show();
+        delay(10);
+      }
+
+        for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, 0, brightness, brightness);
+        pixels.show();
+        delay(10);
+      }
+
+   a = 7;
+    }
+
+    if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+  break;
+    }
+
+    if(digitalRead(SW) == LOW && a == 7){
+    for(int brightness = 0; brightness <= 245; brightness += 5) {
+        pixels.setPixelColor(0, brightness, brightness, brightness);
+        pixels.show();
+        delay(10);
+      }
+        for(int brightness = 245; brightness >= 0; brightness -= 5) {
+        pixels.setPixelColor(0, brightness, brightness, brightness);
+        pixels.show();
+        delay(10);
+      }
+    a = 1;
+
+    }
+     if (digitalRead(SW) == HIGH) {
+      pixels.setPixelColor(0, 0, 0, 0);
+      pixels.show();
+     }
+ }
+} 
+ 
