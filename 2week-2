@@ -1,0 +1,63 @@
+#include <Adafruit_NeoPixel.h>
+#define LED 11
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(1, LED, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+  
+  pixels.begin();
+  pixels.show();
+  randomSeed(analogRead(0));
+}
+
+void loop() {
+  
+  int i = random(1, 4);
+  
+  if (i == 1) {
+    for(int k = 0; k <= 20; k += 1){
+    pixels.setPixelColor(0, 255, 0, 0);
+    pixels.show();
+    delay(50);
+    pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+    delay(50);
+    }
+
+  }
+  else if (i == 2) {
+    for(int k = 0; k <= 20; k += 1){
+
+    pixels.setPixelColor(0, 0, 255, 0);
+    pixels.show();
+    delay(50);
+    pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+    delay(50);
+    }
+  }
+  else {
+    for(int k = 0; k <= 20; k += 1){
+
+    pixels.setPixelColor(0, 0, 0, 255);
+    pixels.show();
+    delay(50);
+    pixels.setPixelColor(0, 0, 0, 0);
+    pixels.show();
+    delay(50);
+    }
+    
+  }
+
+  for (int brightness = 0; brightness  <= 250 ; brightness += 5){
+    pixels.setPixelColor(0, 0, brightness, 0);
+    pixels.show();
+    delay(40);
+  }
+  
+  for (int brightness = 250; brightness >=0 ; brightness -= 5){
+    pixels.setPixelColor(0, 0, 0,  brightness);
+    pixels.show();
+    delay(40);
+  }   
+}
